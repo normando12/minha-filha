@@ -39,8 +39,12 @@ export default function MusicPlayer() {
   const ytStart = MUSIC.youtubeStartSeconds ?? 0;
 
   const playYouTube = useCallback((player) => {
-    if (ytStart > 0) player.seekTo(ytStart, true);
-    player.playVideo();
+    if (!player?.loadVideoById) return;
+
+    player.loadVideoById({
+      videoId: MUSIC.youtubeId,
+      startSeconds: ytStart,
+    });
     setPlaying(true);
     pendingPlayRef.current = false;
   }, [ytStart]);
@@ -51,7 +55,7 @@ export default function MusicPlayer() {
       audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
       return;
     }
-    if (ytPlayerRef.current?.playVideo) {
+    if (ytPlayerRef.current?.loadVideoById) {
       playYouTube(ytPlayerRef.current);
     } else {
       pendingPlayRef.current = true;
@@ -99,18 +103,19 @@ export default function MusicPlayer() {
 
     (async () => {
       const YT = await loadYouTubeApi();
-      if (cancelled || !ytContainerRef.current || ytPlayerRef.current) return;
+      if (cancelled || !ytContainerRef.current) return;
 
       ytPlayerRef.current = new YT.Player(ytContainerRef.current, {
-        height: "0",
-        width: "0",
-        videoId: MUSIC.youtubeId,
+        height: "1",
+        width: "1",
         playerVars: {
           autoplay: 0,
-          start: ytStart,
           controls: 0,
           modestbranding: 1,
+          playsinline: 1,
           rel: 0,
+          enablejsapi: 1,
+          origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
         events: {
           onReady: (e) => {
@@ -125,14 +130,21 @@ export default function MusicPlayer() {
               playYouTube(e.target);
             }
           },
+          onError: () => {
+            setPlaying(false);
+          },
         },
       });
     })();
 
     return () => {
       cancelled = true;
+      if (ytPlayerRef.current?.destroy) {
+        ytPlayerRef.current.destroy();
+      }
+      ytPlayerRef.current = null;
     };
-  }, [useYouTube, ytStart, playYouTube]);
+  }, [useYouTube, playYouTube]);
 
   if (!useLocalAudio && !useYouTube) return null;
 
@@ -142,7 +154,11 @@ export default function MusicPlayer() {
         <audio ref={audioRef} src={MUSIC.src} loop preload="auto" />
       )}
       {useYouTube && (
-        <div ref={ytContainerRef} className="pointer-events-none fixed h-0 w-0 overflow-hidden opacity-0" aria-hidden="true" />
+        <div
+          ref={ytContainerRef}
+          className="pointer-events-none fixed -left-[9999px] top-0 h-px w-px overflow-hidden"
+          aria-hidden="true"
+        />
       )}
 
       <AnimatePresence>
@@ -178,7 +194,8 @@ export default function MusicPlayer() {
               <motion.button
                 type="button"
                 onClick={play}
-                className="rounded-full border border-neon-pink/70 bg-transparent px-10 py-3.5 text-base font-semibold text-white shadow-[0_0_20px_rgba(255,77,157,0.25)] transition-colors hover:bg-neon-pink/10"
+                disabled={useYouTube && !ytReady}
+                className="rounded-full border border-neon-pink/70 bg-transparent px-10 py-3.5 text-base font-semibold text-white shadow-[0_0_20px_rgba(255,77,157,0.25)] transition-colors hover:bg-neon-pink/10 disabled:cursor-wait disabled:opacity-60"
                 whileHover={{
                   scale: 1.05,
                   boxShadow: "0 0 30px rgba(255, 77, 157, 0.55)",
