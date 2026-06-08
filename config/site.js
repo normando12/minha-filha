@@ -43,10 +43,10 @@ export const MUSIC = {
   overlayPhrase: "de um papai apaixonado, com amor",
   overlayHint: "Toque para abrir com a música ♪",
   buttonLabel: "Ouvir com amor",
-  title: "Ísis",
-  artist: "MC Kako",
+  title: "O Caderno",
+  artist: "Toquinho e Sandy",
   /** Vídeo oficial no YouTube — toca ao clicar no botão */
-  youtubeId: "rmYCuGJcQAY",
+  youtubeId: "KZTPRUNSDyE",
   /** Opcional: coloque um .mp3 em public/audio/ e defina o caminho aqui */
   src: null,
 };
