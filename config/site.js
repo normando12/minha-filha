@@ -45,8 +45,10 @@ export const MUSIC = {
   buttonLabel: "Ouvir com amor",
   title: "O Caderno",
   artist: "Toquinho e Sandy",
-  /** Vídeo oficial no YouTube — toca ao clicar no botão */
-  youtubeId: "KZTPRUNSDyE",
+  /** Versão com Toquinho cantando — https://youtu.be/-Gsu751X6ag */
+  youtubeId: "-Gsu751X6ag",
+  /** Pula a introdução instrumental antes do canto */
+  youtubeStartSeconds: 22,
   /** Opcional: coloque um .mp3 em public/audio/ e defina o caminho aqui */
   src: null,
 };

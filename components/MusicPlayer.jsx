@@ -36,20 +36,27 @@ export default function MusicPlayer() {
 
   const useLocalAudio = Boolean(MUSIC.src);
   const useYouTube = Boolean(MUSIC.youtubeId) && !useLocalAudio;
+  const ytStart = MUSIC.youtubeStartSeconds ?? 0;
+
+  const playYouTube = useCallback((player) => {
+    if (ytStart > 0) player.seekTo(ytStart, true);
+    player.playVideo();
+    setPlaying(true);
+    pendingPlayRef.current = false;
+  }, [ytStart]);
 
   const startPlayback = useCallback(() => {
     if (useLocalAudio && audioRef.current) {
+      if (ytStart > 0) audioRef.current.currentTime = ytStart;
       audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
       return;
     }
     if (ytPlayerRef.current?.playVideo) {
-      ytPlayerRef.current.playVideo();
-      setPlaying(true);
-      pendingPlayRef.current = false;
+      playYouTube(ytPlayerRef.current);
     } else {
       pendingPlayRef.current = true;
     }
-  }, [useLocalAudio]);
+  }, [useLocalAudio, ytStart, playYouTube]);
 
   const play = () => {
     setShowStart(false);
@@ -100,8 +107,7 @@ export default function MusicPlayer() {
         videoId: MUSIC.youtubeId,
         playerVars: {
           autoplay: 0,
-          loop: 1,
-          playlist: MUSIC.youtubeId,
+          start: ytStart,
           controls: 0,
           modestbranding: 1,
           rel: 0,
@@ -110,15 +116,14 @@ export default function MusicPlayer() {
           onReady: (e) => {
             if (cancelled) return;
             setYtReady(true);
-            if (pendingPlayRef.current) {
-              e.target.playVideo();
-              setPlaying(true);
-              pendingPlayRef.current = false;
-            }
+            if (pendingPlayRef.current) playYouTube(e.target);
           },
           onStateChange: (e) => {
             if (e.data === YT.PlayerState.PLAYING) setPlaying(true);
             if (e.data === YT.PlayerState.PAUSED) setPlaying(false);
+            if (e.data === YT.PlayerState.ENDED) {
+              playYouTube(e.target);
+            }
           },
         },
       });
@@ -127,7 +132,7 @@ export default function MusicPlayer() {
     return () => {
       cancelled = true;
     };
-  }, [useYouTube]);
+  }, [useYouTube, ytStart, playYouTube]);
 
   if (!useLocalAudio && !useYouTube) return null;
 
