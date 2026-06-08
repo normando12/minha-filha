@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen overflow-x-hidden bg-magic-950 text-white antialiased;
+    font-family: "Outfit", system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-glow-pink-intense {
+    text-shadow:
+      0 0 10px rgba(255, 77, 157, 1),
+      0 0 25px rgba(255, 45, 111, 0.8),
+      0 0 50px rgba(255, 77, 157, 0.5),
+      0 0 80px rgba(255, 45, 111, 0.3);
+  }
+
+  .text-glow-lilac {
+    text-shadow:
+      0 0 15px rgba(192, 132, 252, 0.9),
+      0 0 35px rgba(167, 139, 250, 0.5),
+      0 0 60px rgba(192, 132, 252, 0.25);
+  }
+
+  .text-glow-pink {
+    text-shadow:
+      0 0 15px rgba(255, 77, 157, 0.9),
+      0 0 30px rgba(255, 45, 111, 0.5),
+      0 0 60px rgba(255, 77, 157, 0.3);
+  }
+
+  .text-glow-magic {
+    text-shadow:
+      0 0 20px rgba(192, 132, 252, 0.8),
+      0 0 40px rgba(125, 211, 252, 0.4);
+  }
+
+  .border-glow {
+    box-shadow:
+      0 0 15px rgba(255, 77, 157, 0.4),
+      inset 0 0 15px rgba(255, 77, 157, 0.08);
+  }
+
+  .border-glow-magic {
+    box-shadow:
+      0 0 15px rgba(192, 132, 252, 0.4),
+      inset 0 0 15px rgba(192, 132, 252, 0.08);
+  }
+}
