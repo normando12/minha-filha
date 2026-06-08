@@ -116,6 +116,7 @@ export default function MusicPlayer() {
           rel: 0,
           enablejsapi: 1,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
+          host: "https://www.youtube-nocookie.com",
         },
         events: {
           onReady: (e) => {
