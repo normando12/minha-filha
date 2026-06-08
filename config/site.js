@@ -47,6 +47,8 @@ export const MUSIC = {
   artist: "Toquinho",
   /** Lyric video oficial — permite embed em sites externos */
   youtubeId: "KZTPRUNSDyE",
+  /** Pula os primeiros segundos da introdução */
+  youtubeStartSeconds: 10,
   /** Opcional: coloque um .mp3 em public/audio/ e defina o caminho aqui */
   src: null,
 };
